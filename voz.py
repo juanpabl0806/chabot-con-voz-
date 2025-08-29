@@ -2,7 +2,6 @@ import os
 import requests
 import streamlit as st
 from gtts import gTTS
-import tempfile
 
 # ===== CONFIGURACIÓN =====
 API_URL = "https://api.deepseek.com/v1/chat/completions"
@@ -16,10 +15,14 @@ Si la pregunta no está relacionada, responde: "Solo puedo responder sobre siste
 
 # ===== FUNCIÓN DE TEXTO A VOZ =====
 def speak_text(text):
-    tts = gTTS(text, lang="es")
-    with tempfile.NamedTemporaryFile(delete=False, suffix=".mp3") as fp:
-        tts.save(fp.name)
-        return fp.name
+    try:
+        output_path = "audio_response.mp3"
+        tts = gTTS(text, lang="es")
+        tts.save(output_path)
+        return output_path
+    except Exception as e:
+        st.error(f"Error al generar audio: {e}")
+        return None
 
 # ===== INTERFAZ =====
 st.set_page_config(page_title="Chatbot Sistemas Digitales", page_icon="🤖")
@@ -55,7 +58,8 @@ if user_input:
 
     # Reproducir respuesta en audio
     audio_file = speak_text(response)
-    st.audio(audio_file, format="audio/mp3")
+    if audio_file:
+        st.audio(audio_file, format="audio/mp3")
 
     st.rerun()
 
