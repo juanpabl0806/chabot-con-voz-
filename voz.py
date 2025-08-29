@@ -63,7 +63,3 @@ if user_input:
 
     st.rerun()
 
-# Botón para reiniciar conversación
-if st.button("Reiniciar conversación"):
-    st.session_state.history = [{"role": "system", "content": SYSTEM_PROMPT}]
-    st.rerun()
